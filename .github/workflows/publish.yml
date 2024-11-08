@@ -17,7 +17,7 @@ jobs:
       - name: Get current version
         id: version-lookup
         run: |
-          echo "version=$(curl -f -s "https://plugins.jetbrains.com/api/plugins/17718/updates?channel=nightly&page=1&size=8" | jq -r '. | first | .version')\n" >> $GITHUB_OUTPUT
+          echo "version=$(curl -f -s "https://plugins.jetbrains.com/api/plugins/17718/updates?channel=nightly&page=1&size=8" | jq -r '. | first | .version')" >> $GITHUB_OUTPUT
 
       - name: Check Tag existence
         uses: mukunku/tag-exists-action@v1.6.0
