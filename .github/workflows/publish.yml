@@ -1,0 +1,34 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get current version
+        id: version-lookup
+        run: |
+          echo "version=$(curl -f -s "https://plugins.jetbrains.com/api/plugins/17718/updates?channel=nightly&page=1&size=8" | jq -r '. | first | .version')\n" >> $GITHUB_OUTPUT
+
+      - name: Check Tag existence
+        uses: mukunku/tag-exists-action@v1.6.0
+        id: checkTag
+        with:
+          tag: ${{ steps.version-lookup.outputs.version }}
+
+      - name: Patch it
+        if: steps.checkTag.outputs.exists != 'true'
+        run: bash patch.sh
+
+      - name: Create a GitHub release
+        if: steps.checkTag.outputs.exists != 'true'
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: patched-copilot.zip
+          tag: ${{ steps.version-lookup.outputs.version }}
+          name: ${{ steps.version-lookup.outputs.version }}
+
