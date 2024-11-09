@@ -32,6 +32,7 @@ jobs:
         run: bash patch.sh
 
       - name: Generate artifact attestation
+        if: steps.checkTag.outputs.exists != 'true'
         uses: actions/attest-build-provenance@v1
         with:
           subject-path: patched-copilot.zip
